@@ -4,7 +4,6 @@ Dynamic service discovery and registration solution demo for container based ser
 ## Demo Setup
 In order to run this demo, 5 or 6 virtual machines are needed. Suppose their IP addresses are 192.168.0.1 - 192.168.0.6. The roal for each VM is listed as follows:
 
----------------------------------------------------------------------
 IP Address  | Roal 
 ----------- | -------------------------------------------------------
 192.168.0.1 | Running client for communicating with services behind HAProxy (Optional)
@@ -13,7 +12,6 @@ IP Address  | Roal
 192.168.0.4 | Consul agent (server)
 192.168.0.5 | Consul agent (server)
 192.168.0.6 | Consul agent (server)
-----------------------------------------------------------------------
 
 ### Step 0: Building docker images
 `make`
@@ -27,13 +25,9 @@ IP Address  | Roal
 
 ### Step 2: Launching registrator and dockerized services.
 
-Join the created consul cluster as a concul client:
-```
-192.168.0.3$ scripts/consul.sh restart client
-```
-
 Launch registrator
 ```
+192.168.0.3$ scripts/consul.sh restart client
 192.168.0.3$ scripts/registrator.sh
 ```
 
@@ -47,6 +41,7 @@ The launched container can be stopped and removed by executing script remove.sh
 
 ### Step 3: Launching HAProxy
 ```
+192.168.0.2$ scripts/consul.sh restart client
 192.168.0.2$ scripts/haproxy.sh
 ```
 
@@ -61,13 +56,12 @@ tests/monitor is a simple go program that collects the number of active connecti
 ```
 
 ## Folder Structure
----------------------------------------------------------------------
+
 Folder  | Comments
 ------- | --------------------------------
 images  | Docker images created for this demo
 scripts | Utilities for launching different components in each VM
 tests   | Simple golang program for testing purpose
-----------------------------------------------------------------
 
 ## References:
 #### Consul Related:
