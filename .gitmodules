@@ -1,0 +1,3 @@
+[submodule "images/haproxy"]
+	path = images/haproxy
+	url = https://github.com/leimou/haproxy.git
