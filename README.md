@@ -61,10 +61,12 @@ tests/monitor is a simple go program that collects the number of active connecti
 ```
 
 ## Folder Structure
+---------------------------------------------------------------------
+Folder  | Comments
 ------- | --------------------------------
-images  |  Docker images created for this demo
-scripts |  Utilities for launching different components in each VM
-tests   |  Simple golang program for testing purpose
+images  | Docker images created for this demo
+scripts | Utilities for launching different components in each VM
+tests   | Simple golang program for testing purpose
 ----------------------------------------------------------------
 
 ## References:
