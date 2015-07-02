@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"sort"
 	"sync"
 	"time"
 
@@ -96,8 +97,14 @@ func (m *Monitor) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	for k, v := range m.feps {
-		fmt.Fprintf(w, "%s:%s\n", k, v)
+	var addrs []string
+	for k := range m.feps {
+		addrs = append(addrs, k)
+	}
+	sort.Strings(addrs)
+
+	for _, k := range addrs {
+		fmt.Fprintf(w, "%s:%s\n", k, m.feps[k])
 	}
 }
 
