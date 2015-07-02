@@ -47,8 +47,11 @@ func (m *Monitor) Watch(name string, timeout time.Duration) {
 		if err != nil {
 			log.Fatal(err)
 		}
+
+		m.mu.Lock()
 		m.services = services
-		m.Update(services)
+		m.Update()
+		m.mu.Unlock()
 		waitIndex = meta.LastIndex
 	}
 }
@@ -71,8 +74,10 @@ func (m *Monitor) Retrieve(hostPort string) {
 	m.feps[hostPort] = string(body)
 }
 
-func (m *Monitor) Update(services []*consul.CatalogService) {
-	for _, srv := range services {
+func (m *Monitor) Update() {
+	m.feps = make(map[string]string, 32)
+
+	for _, srv := range m.services {
 		hostPort := net.JoinHostPort(srv.Address, fmt.Sprintf("%d", srv.ServicePort))
 		fmt.Println("New Service Found:", srv.Address, srv.ServicePort)
 		go m.Retrieve(hostPort)
@@ -83,7 +88,7 @@ func (m *Monitor) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	go m.Update(m.services)
+	go m.Update()
 
 	for k, v := range m.feps {
 		fmt.Fprintf(w, "%s:%s\n", k, v)

@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"math/rand"
 	"net"
 	"sync"
 	"time"
@@ -31,7 +32,7 @@ func (c *ClientFEP) Connect(id int) error {
 		fmt.Println(err.Error())
 		return err
 	}
-	fmt.Println("Connection established:", id)
+	fmt.Println("Connection %d established: %s\n", id, conn.LocalAddr())
 
 	buf := make([]byte, 32*1024)
 	for {
@@ -45,8 +46,6 @@ func (c *ClientFEP) Connect(id int) error {
 		if err != nil {
 			fmt.Println("conn read", id, ":", err.Error())
 			return err
-		} else {
-			fmt.Printf("conn %d: received %s\n", id, string(buf))
 		}
 		time.Sleep(time.Second)
 	}
@@ -59,6 +58,8 @@ func main() {
 	for i := 0; i < conns; i++ {
 		c.waitGroup.Add(1)
 		go c.Connect(i)
+		interval := rand.Int() * 1500
+		time.Sleep(time.Millisecond * time.Duration(interval))
 	}
 	c.waitGroup.Wait()
 }
