@@ -19,6 +19,8 @@ type Monitor struct {
 
 	mu sync.Mutex
 
+	waitGroup sync.WaitGroup
+
 	// Address:Port -> response of GET request
 	feps map[string]string
 }
@@ -50,13 +52,16 @@ func (m *Monitor) Watch(name string, timeout time.Duration) {
 
 		m.mu.Lock()
 		m.services = services
-		m.Update()
 		m.mu.Unlock()
+
+		m.Update()
 		waitIndex = meta.LastIndex
 	}
 }
 
 func (m *Monitor) Retrieve(hostPort string) {
+	defer m.waitGroup.Done()
+
 	url := fmt.Sprintf("http://%s/conns", hostPort)
 	resp, err := http.Get(url)
 
@@ -79,16 +84,17 @@ func (m *Monitor) Update() {
 
 	for _, srv := range m.services {
 		hostPort := net.JoinHostPort(srv.Address, fmt.Sprintf("%d", srv.ServicePort))
-		fmt.Println("New Service Found:", srv.Address, srv.ServicePort)
+		m.waitGroup.Add(1)
 		go m.Retrieve(hostPort)
 	}
+	m.waitGroup.Wait()
 }
 
 func (m *Monitor) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	m.Update()
+
 	m.mu.Lock()
 	defer m.mu.Unlock()
-
-	go m.Update()
 
 	for k, v := range m.feps {
 		fmt.Fprintf(w, "%s:%s\n", k, v)
