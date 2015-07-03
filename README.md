@@ -83,3 +83,5 @@ tests   | Simple golang program for testing purpose
 [HAProxy graceful reload with zero packet loss](http://serverfault.com/questions/580595/haproxy-graceful-reload-with-zero-packet-loss)
 
 [HAProxy: Reloading your Config With Minimal Service Impact](http://www.mgoff.in/2010/04/18/haproxy-reloading-your-config-with-minimal-service-impact/)
+
+[Discussion regarding to 'maxconn' usage](http://comments.gmane.org/gmane.comp.web.haproxy/11627)
